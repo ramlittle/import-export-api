@@ -35,21 +35,30 @@ router.post('/register', async ( request, response ) => {
 
 //login
 router.post('/login', ( request, response ) => {
-    User.findOne({ email: request.body.email }).then( result => {
-        bcrypt.compare( request.body.password, result.password, ( err, match ) => {
-            if( match ){
-                // Autheticated, valid email and password
-                response.send({
-                    status: "Valid crendentials",
-                    id: result._id
-                });
-            }else{
-                response.send({
-                    status: "Invalid credentials"
-                })
-            }    
+    try{
+        const obtainedEmail=User.findOne({ email: request.body.email })
+        console.log('obtainedEmail',obtainedEmail)
+        if(obtainedEmail.password==null){
+            return response.send({status:'account not exists'})
+        }
+        obtainedEmail.then( result => {
+            bcrypt.compare( request.body.password, result.password, ( err, match ) => {
+                if( match ){
+                    // Autheticated, valid email and password
+                    response.send({
+                        status: "Valid crendentials",
+                        id: result._id
+                    });
+                }else{
+                    response.send({
+                        status: "Invalid password"
+                    })
+                }    
+            });
         });
-    });
+    }catch(error){
+        response.status(500).send({status:'server error'})
+    }
 });
 
 
