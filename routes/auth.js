@@ -20,7 +20,7 @@ router.post('/register', async ( request, response ) => {
     //check if user is already existing
         const checkEmail=await User.findOne({email:request.body.email});
         if(checkEmail!=null){
-            return response.send({status: 'user already exists '})//put return so that when true, does not read next line
+            return response.send({status: 'User already exists'})//put return so that when true, does not read next line
         }
         //adds new user if email is not yet existing
             newUser.save().then( result => {
