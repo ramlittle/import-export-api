@@ -18,7 +18,7 @@ const UserRouter = require('./routes/users');
 const AuthRouter = require('./routes/auth');
 
 // Database connection
-mongoose.connect('mongodb://localhost:27017/upliftingdb');
+mongoose.connect('mongodb://127.0.0.1:27017/upliftingdb');
 
 
 server.get('/', ( request, response ) => {

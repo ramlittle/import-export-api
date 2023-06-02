@@ -34,15 +34,23 @@ router.post('/register', async ( request, response ) => {
 });
 
 //login
-router.post('/login', ( request, response ) => {
+router.post('/login', async( request, response ) => {
+    const {email}=request.body; //needed for checking if email exists, code was given by chatgpt
     try{
-        const obtainedEmail=User.findOne({ email: request.body.email })
-        console.log('obtainedEmail',obtainedEmail)
-        if(obtainedEmail.password==null){
-            return response.send({status:'account not exists'})
+        const findEmail = await User.findOne({ email });
+
+        if (!findEmail) {
+            return response.send({ message: 'Email not yet registered' });
         }
+
+        //If email exists, compare the password and hashed password if matched
+        const obtainedEmail=User.findOne({ email: request.body.email })//need this to get what was entered by user
+
         obtainedEmail.then( result => {
             bcrypt.compare( request.body.password, result.password, ( err, match ) => {
+                
+                console.log('result password',result.password)
+                console.log('request.body.password' ,request.body.password)
                 if( match ){
                     // Autheticated, valid email and password
                     response.send({
@@ -56,6 +64,8 @@ router.post('/login', ( request, response ) => {
                 }    
             });
         });
+        
+        
     }catch(error){
         response.status(500).send({status:'server error'})
     }
