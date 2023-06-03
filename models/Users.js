@@ -3,14 +3,14 @@ const mongoose = require('mongoose');
 const UserSchema=new mongoose.Schema({
     firstName: String,
     lastName: String,
+    sex: String,
+    birthDate: Date,
     email: String,
     password: String,
     contactNumber: String,
-    sex: String,
     address: String,
-    address: String,
+    isAdmin: Boolean,
     profilePicture: String,
-    birthDate: Date,
 })
 
 module.exports=mongoose.model('User',UserSchema);

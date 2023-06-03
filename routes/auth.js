@@ -56,7 +56,11 @@ router.post('/login', async( request, response ) => {
                     response.send({
                         status: "Valid Credentials",
                         id: result._id,
-                        email: result.email
+                        email: result.email,
+                        isAdmin: result.isAdmin,
+                        firstName: result.firstName,
+                        lastName: result.lastName,
+                        birthDate: result.birthDate
                     });
                 }else{
                     response.send({
