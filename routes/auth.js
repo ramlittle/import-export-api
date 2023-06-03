@@ -40,7 +40,7 @@ router.post('/login', async( request, response ) => {
         const findEmail = await User.findOne({ email });
 
         if (!findEmail) {
-            return response.send({ message: 'Email not yet registered' });
+            return response.send({ status: 'Email not yet registered' });
         }
 
         //If email exists, compare the password and hashed password if matched
@@ -54,8 +54,9 @@ router.post('/login', async( request, response ) => {
                 if( match ){
                     // Autheticated, valid email and password
                     response.send({
-                        status: "Valid crendentials",
-                        id: result._id
+                        status: "Valid Credentials",
+                        id: result._id,
+                        email: result.email
                     });
                 }else{
                     response.send({
