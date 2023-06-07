@@ -38,11 +38,11 @@ router.put('/:id', ( request, response ) => {
             { $set: { ...request.body } })
         .then( result => {
             if( result.modifiedCount === 1 ){
-                response.send({ status: "User has been updated" });
+                response.send({ status: "User Information has been updated Successfully" });
             }
         });
     }catch(error){
-        
+        response.status(500).send({status:'server error'})
     }
 });
 
