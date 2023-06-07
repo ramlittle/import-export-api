@@ -17,13 +17,32 @@ router.get('/', async (request, response)=>{
    }
 });
 
-//return one user
+//return one user by ID
 router.get('/:id', async (request, response)=>{
     try{
     const userId=request.params.id;
    const results = await User.findOne({_id:userId})
    .exec();
    response.send(results);
+   }catch(error){
+       response.status(500).send({status:'server error'})
+   }
+});
+
+//return all users by last Name
+router.get('/search/:lastName', async (request, response)=>{
+    try{
+    const lastName=request.params.lastName;
+    console.log('parameter',lastName)
+   const results = await User.find({})
+   .exec();
+   const searched = results.filter(result=>{
+        if(result.firstName.toLowerCase().includes(`${lastName}`)){
+            return result;
+        }
+   })
+   console.log('results',searched)
+   response.send(searched);
    }catch(error){
        response.status(500).send({status:'server error'})
    }
