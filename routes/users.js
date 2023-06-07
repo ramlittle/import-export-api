@@ -33,19 +33,18 @@ router.get('/:id', async (request, response)=>{
 router.get('/search/:lastName', async (request, response)=>{
     try{
     const lastName=request.params.lastName;
-    console.log('parameter',lastName)
-   const results = await User.find({})
-   .exec();
-   const searched = results.filter(result=>{
-        if(result.firstName.toLowerCase().includes(`${lastName}`)){
-            return result;
-        }
-   })
-   console.log('results',searched)
-   response.send(searched);
-   }catch(error){
-       response.status(500).send({status:'server error'})
-   }
+
+    //regular expression for search, using i as flagger to not
+    //consider case sensitivity
+    const regex = new RegExp(lastName,'i')
+
+    //Why have search, be on the backend? because backend is stronger than frontend
+    const results = await User.find({lastName:regex})
+    .exec();
+    response.send(results);
+    }catch(error){
+        response.status(500).send({status:'server error'})
+    }
 });
 
 // Update a user
