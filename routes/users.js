@@ -101,7 +101,24 @@ router.delete('/:id', ( request, response ) => {
     }
 });
 
-
+//Delete Multiple Users
+//ref:https://stackoverflow.com/questions/17826082/how-to-delete-multiple-ids-in-mongodb
+router.delete('/delete/many',(request,response) => {
+    try{
+        const idsToDelete = request.body.ids;
+        console.log('userIDs',idsToDelete)
+        User.deleteMany({_id:{$in:idsToDelete}})
+        .then(result=>{
+                const list = result.deletedCount;
+                console.log('deleted count',list.deletedCount)
+                response.status(200).send({
+                    status:'Users have been deleted'
+                })
+        })
+    }catch(error){
+        response.status(500).send({status:'unable to delete server error'})
+    }
+});
 
 
 module.exports = router;
