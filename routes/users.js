@@ -103,17 +103,19 @@ router.delete('/:id', ( request, response ) => {
 
 //Delete Multiple Users
 //ref:https://stackoverflow.com/questions/17826082/how-to-delete-multiple-ids-in-mongodb
-router.delete('/delete/many',(request,response) => {
+//ref2: https://stackoverflow.com/questions/55065598/how-to-delete-multiple-data-with-with-the-req-params-ids-multiple-ids
+//ref3: https://www.youtube.com/watch?v=HuprZMswvjw
+router.post('/delete/many/',(request,response) => {
     try{
-        const idsToDelete = request.body.ids;
+        const idsToDelete = request.body //obtain the data from the api call reactjs
         console.log('userIDs',idsToDelete)
         User.deleteMany({_id:{$in:idsToDelete}})
         .then(result=>{
-                const list = result.deletedCount;
-                console.log('deleted count',list.deletedCount)
+            if(result.deletedCount===idsToDelete.length){
                 response.status(200).send({
                     status:'Users have been deleted'
                 })
+            }
         })
     }catch(error){
         response.status(500).send({status:'unable to delete server error'})
