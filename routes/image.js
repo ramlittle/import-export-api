@@ -1,45 +1,26 @@
-const express = require('express');
-const multer = require('multer');
-const path = require('path');
+const express=require('express');
 const router = express.Router();
+const multer =require('multer');
+const path = require('path')
 const Image = require('../models/Image');
 
+const storage=multer.diskStorage({
+    destination:(req,file,cb)=>{
+        cb(null,'../Images')//this is the folder that would contain your images
+    },
+    filename: (req,file,cb)=>{
+        console.log('here is the file',file)
+        cb(null, Date.now()+ path.extname(file.originalname))//when the file is accepted, it will show as [date]-fileoriginalname
+    }
+})
+const upload=multer({storage: storage})
 
-// Set storage configuration for Multer
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/'); // Specify the folder where you want to save the uploaded files
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    const fileExtension = path.extname(file.originalname);
-    const filename = file.fieldname + '-' + uniqueSuffix + fileExtension;
-    cb(null, filename);
-  },
-});
+//the actual api to upload image, the one after upoad.single is the name of the input where you will grab the file
+//ex. input name ='name'
+router.post('/upload',upload.single('image'),(req,res)=>{
+    console.log('here is the file you gave',req.image)
+    res.send('image uploaded');
+})
 
-// Create Multer instance with the storage configuration
-const upload = multer({ storage: storage });
-
-// POST route for file upload
-router.post('/upload', upload.single('file'), async (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ message: 'No file uploaded' });
-  }
-
-  // Get the file path
-  const filePath = path.join(__dirname, '../uploads', req.file.filename);
-
-  try {
-    // Save the file information to the database using Mongoose
-    const image = new Image({ filename: req.file.filename, filepath: filePath });
-    await image.save();
-
-    res.status(200).json({ message: 'File uploaded successfully', image });
-  } catch (error) {
-    console.error('Error uploading file:', error);
-    res.status(500).json({ message: 'Internal Server Error' });
-  }
-});
 
 module.exports = router;
