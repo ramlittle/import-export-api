@@ -16,6 +16,7 @@ server.use( helmet() );
 // Routes
 const UserRouter = require('./routes/users');
 const AuthRouter = require('./routes/auth');
+const ImageRouter = require('./routes/image');
 
 // Database connection
 mongoose.connect('mongodb://127.0.0.1:27017/upliftingdb');
@@ -28,6 +29,7 @@ server.get('/', ( request, response ) => {
 // endpoints
 server.use('/api/v1/auth', AuthRouter );
 server.use('/api/v1/users', UserRouter );
+server.use('/api/v1/image',ImageRouter)
 
 server.listen(port, () => {
         console.log(`Server running on port ${ port }`);
