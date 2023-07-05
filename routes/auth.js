@@ -8,50 +8,46 @@ const path = require('path');
 //Model
 const User = require('../models/Users')
 
+
 // BCrypt
 const bcrypt = require('bcrypt');
 
 //Storing images
+
+let imageFileName='';
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        console.log('here is the file1', req)
-        cb(null, '../uploads/');//specify destination folder where files will be saved
+    destination: (req, file, cb) => {
+        cb(null, './Images')//this is the folder that would contain your images
     },
-    filename: function (req, file, cb) {
-        console.log('here is the file2', req)
-        cb(null, file.originalname);//use the original file name for saving
+    filename: (req, file, cb) => {
+        console.log('here is the file', file)
+        imageFileName=Date.now() + path.extname(file.originalname);
+        cb(null, imageFileName)//when the file is accepted, it will show as [date]-fileoriginalname
+
     }
-});
+})
 const upload = multer({ storage: storage })
 
-router.post('/upload', upload.single('file'), (req, res) => {
-    console.log('here is the file', req)
-    if (!req.file) {
-        return res.status(400).json({ message: 'no file uploaded' })
-    }
-    const filePath = path.join(__dirname, '../uploads', req.file.filename)
-    res.status(200).json({ message: 'File uploaded successfully', filePath: filePath })
-})
-
-
 //registration
-router.post('/register', async (request, response) => {
+router.post('/register', upload.single('file'),async (request, response) => {
+   
     try {
         const hashedPassword = await bcrypt.hash(request.body.password, 10);
         const newUser = new User({
             ...request.body,
             password: hashedPassword,
-            isAdmin: false
+            isAdmin: false,
+            picture: imageFileName
         });
 
         //check if user is already existing
         const checkEmail = await User.findOne({ email: request.body.email });
         if (checkEmail != null) {
-            return response.send({ status: 'User already exists' })//put return so that when true, does not read next line
+            return response.status(401).send({ status: 'User already exists' })//put return so that when true, does not read next line
         }
         //adds new user if email is not yet existing
         newUser.save().then(result => {
-            response.send({ status: "User has been created" });
+            response.status(201).send({ status: "User has been created" });
         })
 
     } catch (error) {

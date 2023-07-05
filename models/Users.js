@@ -10,7 +10,7 @@ const UserSchema=new mongoose.Schema({
     contactNumber: String,
     address: String,
     isAdmin: Boolean,
-    profilePicture: String,
+    picture: String,
 })
 
 module.exports=mongoose.model('User',UserSchema);
